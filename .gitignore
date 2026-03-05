@@ -1,0 +1,51 @@
+# =========================
+# Build directories
+# =========================
+build/
+cmake-build-debug/
+cmake-build-release/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+CTestTestfile.cmake
+cmake_install.cmake
+install_manifest.txt
+*.cmake
+
+# Ninja
+.ninja_deps
+.ninja_log
+build.ninja
+
+# =========================
+# Compiled files
+# =========================
+*.o
+*.obj
+*.so
+*.a
+*.out
+*.exe
+
+# =========================
+# CLion / JetBrains
+# =========================
+.idea/
+*.iml
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# Test output
+# =========================
+Testing/
