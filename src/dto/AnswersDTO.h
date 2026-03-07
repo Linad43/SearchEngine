@@ -41,6 +41,8 @@ public:
     bool result;
     std::vector<RelevanceItem> relevance;
 
+    RequestAnswer() = default;
+
     RequestAnswer(
         const bool result,
         const std::vector<RelevanceItem> &relevance)
@@ -52,8 +54,8 @@ public:
         nlohmann::json j;
         j["result"] = result;
         j["relevance"] = nlohmann::json::object();
-        for (auto& relevanceItem: relevance) {
-            j["relevance"].push_back(relevanceItem.toJson());
+        for (auto &relevanceItem: relevance) {
+            j["answers"] = relevanceItem.toJson();
         }
         return j;
     }
@@ -75,7 +77,7 @@ public:
     nlohmann::json toJson() {
         nlohmann::json j;
         j["answers"] = nlohmann::json::object();
-        for (auto& [key, value]: answers) {
+        for (auto &[key, value]: answers) {
             j["answers"][key] = value.toJson();
         }
         return j;

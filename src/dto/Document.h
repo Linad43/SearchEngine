@@ -7,8 +7,10 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <vector>
 
+#include "../coopFunc.h"
 #include "nlohmann/json.hpp"
 
 
@@ -17,7 +19,7 @@ public:
     inline static int nextId = 0;
     int docid;
     std::filesystem::path filepath;
-    std::string text;
+    std::map<std::string, int> text;
 
     Document(
         const std::filesystem::path &filepath) {
@@ -29,18 +31,29 @@ public:
             return;
         }
         std::string buf;
-        text = "";
-        std::cout << "Loading file " << filepath << std::endl;
+        // std::cout << "Loading file " << filepath << std::endl;
         while (file >> buf) {
-            text += buf + " ";
+            buf = strToLow(delPunctuation(buf));
+            if (text.contains(buf)) {
+                text[buf]++;
+            } else {
+                text[buf] = 1;
+            }
         }
+        // std::cout << toString() << std::endl;
+        file.close();
+    }
+    nlohmann::json toJson() {
         nlohmann::json j;
         j["docid"] = docid;
         j["filepath"] = filepath;
         j["text"] = text;
-        std::cout << j.dump(4) << std::endl;
-        file.close();
+        return j;
     }
+    std::string toString() {
+        return toJson().dump(4);
+    }
+
 };
 
 #endif //SEARCHENGINE_DOCUMENT_H

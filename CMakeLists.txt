@@ -55,6 +55,8 @@ add_executable(${NAME_PROJECT}
         src/coopFunc.h
         src/dto/Document.cpp
         src/dto/Document.h
+        src/dto/Indexer.cpp
+        src/dto/Indexer.h
 )
 
 target_include_directories(${NAME_PROJECT} PRIVATE include)

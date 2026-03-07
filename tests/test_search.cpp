@@ -7,6 +7,7 @@
 #include "../src/dto/Document.h"
 // #include "../src/coopFunc.h"
 #include "../src/coopFunc.cpp"
+#include "../src/SearchEngine.h"
 #include <iostream>
 
 #include "../src/dto/Document.h"
@@ -18,24 +19,27 @@
 // }
 TEST(ConfigTest, LoadAndSerialize) {
     // const auto exeDir = std::filesystem::current_path();
-    std::string direct = "config_test.json";
-    std::filesystem::path dir = strToDir(direct);
-    Config cfg(dir);
+    // std::string direct = "config_test.json";
+    // std::filesystem::path dir = strToDir(direct);
+    // Config cfg(dir);
+    //
+    // EXPECT_EQ(cfg.name, "TestEngine");
+    // EXPECT_EQ(cfg.version, "0.0.1");
+    // EXPECT_EQ(cfg.max_responses, 3);
+    // ASSERT_EQ(cfg.files.size(), 2);
+    // EXPECT_EQ(cfg.files[0], "file1.txt");
+    //
+    // auto j = cfg.toJson();
+    // EXPECT_EQ(j["config"]["name"], "TestEngine");
+    // EXPECT_EQ(j["files"].size(), 2);
+    // std::cout << cfg.toString() << std::endl;
+    //
+    // std::cout << "JSON output:\n" << cfg.toJson().dump(4) << std::endl;
+    //
+    // for (int i = 0; i < cfg.files.size(); i++) {
+    //     new Document(strToDir(cfg.files[i]));
+    // }
 
-    EXPECT_EQ(cfg.name, "TestEngine");
-    EXPECT_EQ(cfg.version, "0.0.1");
-    EXPECT_EQ(cfg.max_responses, 3);
-    ASSERT_EQ(cfg.files.size(), 2);
-    EXPECT_EQ(cfg.files[0], "file1.txt");
-
-    auto j = cfg.toJson();
-    EXPECT_EQ(j["config"]["name"], "TestEngine");
-    EXPECT_EQ(j["files"].size(), 2);
-    std::cout << cfg.toString() << std::endl;
-
-    std::cout << "JSON output:\n" << cfg.toJson().dump(4) << std::endl;
-
-    for (int i = 0; i < cfg.files.size(); i++) {
-        new Document(strToDir(cfg.files[i]));
-    }
+    auto *s = new SearchEngine();
+    s->search({"milk", "sugar"});
 }

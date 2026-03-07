@@ -13,7 +13,10 @@ void generateRequest(std::filesystem::path exeDir, std::vector<std::string> *all
 
 void generateFiles(std::vector<std::string> files, std::filesystem::path exeDir);
 
-std::filesystem::path strToDir(const std::string& strDir);
+std::filesystem::path strToDir(const std::string &strDir);
 
+std::string strToLow(const std::string &input);
+
+std::string delPunctuation(const std::string &str);
 
 #endif //SEARCHENGINE_COOPFUNC_H

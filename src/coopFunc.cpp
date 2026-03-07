@@ -25,6 +25,7 @@ std::vector<std::string> splitString(const std::string &str, const std::string &
     }
     return result;
 }
+
 void generateRequest(std::filesystem::path exeDir, std::vector<std::string> *allWords) {
     std::vector<std::string> requests;
     auto requestDir = exeDir / "request.json";
@@ -35,8 +36,8 @@ void generateRequest(std::filesystem::path exeDir, std::vector<std::string> *all
     }
 
     std::string buf = "";
-    for (auto i = 0; i < (rand() % 999)+1; i++) {
-        for (auto j = 0; j < (rand() % 9)+1; j++) {
+    for (auto i = 0; i < (rand() % 999) + 1; i++) {
+        for (auto j = 0; j < (rand() % 9) + 1; j++) {
             if (j != 0) {
                 buf += " ";
             }
@@ -96,12 +97,34 @@ void generateFiles(std::vector<std::string> files, std::filesystem::path exeDir)
     generateRequest(exeDir, &allWords);
 }
 
-std::filesystem::path strToDir(const std::string& strDir) {
+std::filesystem::path strToDir(const std::string &strDir) {
     std::filesystem::path result;
     auto filePath = splitString(strDir, "/");
     for (auto j = 0; j < filePath.size(); j++) {
         if (filePath[j] != "." && filePath[j] != "..") {
             result = result / filePath[j];
+        }
+    }
+    return result;
+}
+
+std::string strToLow(const std::string &input) {
+    std::string result = input;
+    for (char &i: result) {
+        i = tolower(i);
+    }
+    return result;
+}
+
+std::string delPunctuation(const std::string &str) {
+    std::string result = "";
+    for (const char i : str) {
+        if (i != '.'
+            && i != ','
+            && i != '_'
+            && i != ';'
+            && i != ':') {
+            result += i;
         }
     }
     return result;
