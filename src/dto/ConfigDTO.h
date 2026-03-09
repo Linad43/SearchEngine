@@ -12,6 +12,8 @@
 #include <fstream>
 #include <stdexcept>
 
+#define CURRENT_VERSION "1.0.0"
+
 class Config {
 public:
     std::string name;
@@ -23,8 +25,14 @@ public:
     Config(const std::filesystem::path &directConfig) {
         std::ifstream file(directConfig);
         std::cout << std::filesystem::absolute(directConfig) << std::endl;
+
+        //config file is missing
         if (!file.is_open())
             throw std::runtime_error("Cannot open config file: " + std::filesystem::absolute(directConfig).string());
+
+        //config file is empty
+        if (file.peek() == std::ifstream::traits_type::eof())
+            throw std::runtime_error("Config file is empty!");
 
         nlohmann::json j;
         file >> j;
@@ -33,6 +41,11 @@ public:
         name = cfg.at("name").get<std::string>();
         version = cfg.at("version").get<std::string>();
         max_responses = cfg.at("max_responses").get<int>();
+
+        //config.json has incorrect file version
+        if (version != CURRENT_VERSION)
+            throw std::runtime_error("Config file version mismatch."
+                                     "\nCurrent version " CURRENT_VERSION ", version configs " + version);
 
         files = j.at("files").get<std::vector<std::string> >();
     }
