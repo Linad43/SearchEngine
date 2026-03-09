@@ -38,6 +38,14 @@ public:
     std::vector<std::pair<int, float> > search(std::string query) {
         std::map<int, float> relevance;
         auto bufQuery = splitString(query, " ");
+
+        // sorting query words by rarity
+        std::ranges::sort(bufQuery, [this](auto &a, auto &b) {
+            auto sizeA = idx->index.contains(a) ? idx->index[a].size() : 0;
+            auto sizeB = idx->index.contains(b) ? idx->index[b].size() : 0;
+            return sizeA < sizeB;
+        });
+
         int maxScore = 0;
         for (auto word: bufQuery) {
             if (idx->index.contains(word)) {
@@ -73,12 +81,12 @@ public:
 
         return results;
     }
-    std::vector<std::vector<std::pair<int, float> > > searchAllRequests(std::vector<std::string > requests) {
 
-        std::vector<std::future<std::vector<std::pair<int, float>>>> futures;
+    std::vector<std::vector<std::pair<int, float> > > searchAllRequests(std::vector<std::string> requests) {
+        std::vector<std::future<std::vector<std::pair<int, float> > > > futures;
 
         // запускаем потоки
-        for (const auto& request : requests) {
+        for (const auto &request: requests) {
             futures.push_back(
                 std::async(std::launch::async, [this, request]() {
                     return search(request);
@@ -87,9 +95,9 @@ public:
         }
 
         // собираем результаты
-        std::vector<std::vector<std::pair<int, float>>> results;
+        std::vector<std::vector<std::pair<int, float> > > results;
 
-        for (auto& f : futures) {
+        for (auto &f: futures) {
             results.push_back(f.get());
         }
 
