@@ -4,6 +4,7 @@
 
 #ifndef SEARCHENGINE_DOCUMENT_H
 #define SEARCHENGINE_DOCUMENT_H
+#pragma once
 #include <filesystem>
 #include <fstream>
 #include <iostream>

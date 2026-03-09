@@ -43,21 +43,14 @@ enable_testing()
 # ----------------------------
 add_executable(${NAME_PROJECT}
         src/main.cpp
-        src/SearchEngine.cpp
-        src/SearchEngine.h
-        src/dto/ConfigDTO.cpp
+        src/SearchServer.h
         src/dto/ConfigDTO.h
-        src/dto/RequestDTO.cpp
         src/dto/RequestDTO.h
-        src/dto/AnswersDTO.cpp
         src/dto/AnswersDTO.h
         src/coopFunc.cpp
         src/coopFunc.h
-        src/dto/Document.cpp
         src/dto/Document.h
-        src/dto/Indexer.cpp
         src/dto/Indexer.h
-        src/ConverterJSON.cpp
         src/ConverterJSON.h
 )
 

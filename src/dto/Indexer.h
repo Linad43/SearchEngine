@@ -4,6 +4,7 @@
 
 #ifndef SEARCHENGINE_INDEXER_H
 #define SEARCHENGINE_INDEXER_H
+#pragma once
 #include <map>
 #include <set>
 #include <string>

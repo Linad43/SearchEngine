@@ -4,20 +4,16 @@
 
 #ifndef SEARCHENGINE_CONVERTERJSON_H
 #define SEARCHENGINE_CONVERTERJSON_H
+#pragma once
 #include <string>
 #include <vector>
 
-#include "SearchEngine.h"
+#include "SearchServer.h"
 #include "dto/RequestDTO.h"
 
 class ConverterJSON {
 public:
     ConverterJSON() = default;
-
-    RequestsDTO getResponses() {
-        RequestsDTO requests = RequestsDTO("requests.json");
-        return requests;
-    }
 
     void putAnswers(std::vector<std::vector<std::pair<int, float> > > answers) {
         auto resultAnswers = AnswersDTO();

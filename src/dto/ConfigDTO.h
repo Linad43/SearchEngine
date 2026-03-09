@@ -20,10 +20,11 @@ public:
     std::vector<std::string> files;
 
     // Конструктор из файла
-    Config(const std::filesystem::path& directConfig) {
+    Config(const std::filesystem::path &directConfig) {
         std::ifstream file(directConfig);
+        std::cout << std::filesystem::absolute(directConfig) << std::endl;
         if (!file.is_open())
-            throw std::runtime_error("Cannot open config file: " + directConfig.string());
+            throw std::runtime_error("Cannot open config file: " + std::filesystem::absolute(directConfig).string());
 
         nlohmann::json j;
         file >> j;

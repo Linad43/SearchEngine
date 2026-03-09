@@ -4,9 +4,9 @@
 
 #ifndef SEARCHENGINE_SEARCHENGINE_H
 #define SEARCHENGINE_SEARCHENGINE_H
+#pragma once
 #include "coopFunc.h"
 #include <vector>
-#include <ranges>
 #include <algorithm>
 #include "dto/AnswersDTO.h"
 #include "dto/ConfigDTO.h"
@@ -14,13 +14,13 @@
 #include "dto/Indexer.h"
 #include <future>
 
-class SearchEngine {
+class SearchServer {
     Config *cfg;
     Indexer *idx;
 
 public:
-    SearchEngine() {
-        cfg = new Config(strToDir("config_test.json"));
+    SearchServer() {
+        cfg = new Config(strToDir("config.json"));
         std::vector<Document> docs;
 
         for (const auto &dir: cfg->files) {
@@ -62,6 +62,8 @@ public:
             results.emplace_back(pair.first, pair.second);
         }
         std::ranges::sort(results, [](const auto &a, const auto &b) {
+            if (a.second == b.second)
+                return a.first < b.first;
             return a.second > b.second;
         });
 
