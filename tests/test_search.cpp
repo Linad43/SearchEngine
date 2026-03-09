@@ -10,6 +10,7 @@
 #include "../src/SearchEngine.h"
 #include <iostream>
 
+#include "../src/ConverterJSON.h"
 #include "../src/dto/Document.h"
 
 // TEST(DummyTest, BasicAssertion) {
@@ -41,5 +42,8 @@ TEST(ConfigTest, LoadAndSerialize) {
     // }
 
     auto *s = new SearchEngine();
-    s->search({"milk", "sugar"});
+    auto re = ConverterJSON();
+    auto requests = RequestsDTO("requests.json");
+    re.getResponses();
+    re.putAnswers(s->searchAllRequests(requests.requests));
 }

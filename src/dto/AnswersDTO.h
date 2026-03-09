@@ -15,11 +15,11 @@
 class RelevanceItem {
 public:
     int docid;
-    double rank;
+    float rank;
 
     RelevanceItem(
         const int docid,
-        const double rank)
+        const float rank)
         : docid(docid),
           rank(rank) {
     }
@@ -53,10 +53,15 @@ public:
     nlohmann::json toJson() {
         nlohmann::json j;
         j["result"] = result;
-        j["relevance"] = nlohmann::json::object();
-        for (auto &relevanceItem: relevance) {
-            j["answers"] = relevanceItem.toJson();
+
+        if (result) {
+            j["relevance"] = nlohmann::json::array();
+
+            for (auto &item : relevance) {
+                j["relevance"].push_back(item.toJson());
+            }
         }
+
         return j;
     }
 
@@ -68,7 +73,7 @@ public:
 class AnswersDTO {
 public:
     std::map<std::string, RequestAnswer> answers;
-
+    AnswersDTO() = default;
     AnswersDTO(
         const std::map<std::string, RequestAnswer> &answers)
         : answers(answers) {

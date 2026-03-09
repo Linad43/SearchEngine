@@ -57,6 +57,8 @@ add_executable(${NAME_PROJECT}
         src/dto/Document.h
         src/dto/Indexer.cpp
         src/dto/Indexer.h
+        src/ConverterJSON.cpp
+        src/ConverterJSON.h
 )
 
 target_include_directories(${NAME_PROJECT} PRIVATE include)

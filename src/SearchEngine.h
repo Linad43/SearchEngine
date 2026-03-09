@@ -5,11 +5,14 @@
 #ifndef SEARCHENGINE_SEARCHENGINE_H
 #define SEARCHENGINE_SEARCHENGINE_H
 #include "coopFunc.h"
+#include <vector>
+#include <ranges>
+#include <algorithm>
 #include "dto/AnswersDTO.h"
 #include "dto/ConfigDTO.h"
 #include "dto/Document.h"
 #include "dto/Indexer.h"
-
+#include <future>
 
 class SearchEngine {
     Config *cfg;
@@ -32,73 +35,63 @@ public:
         // std::cout << idx->toString() << std::endl;
     }
 
-
-    std::map<int, float>::iterator findMaxRelevance(std::map<int, float> *relevance) {
-        auto maxRelevance = relevance->begin();
-
-        for (auto it = relevance->begin(); it != relevance->end(); ++it) {
-            std::cout << it->first << ": " << it->second << std::endl;
-        }
-
-        for (auto it = relevance->begin(); it != relevance->end(); ++it) {
-            std::cout << it->first << ": " << it->second << std::endl;
-            if (maxRelevance->second < it->second) {
-                maxRelevance = it;
-            }
-        }
-        relevance->erase(maxRelevance);
-
-        for (auto it = relevance->begin(); it != relevance->end(); ++it) {
-            std::cout << it->first << ": " << it->second << std::endl;
-        }
-
-        return maxRelevance;
-    }
-
-    /*std::vector<std::vector<std::pair<int, float> > >*/
-    std::vector<std::vector<std::pair<int, float> > > search(std::vector<std::string> query) {
+    std::vector<std::pair<int, float> > search(std::string query) {
         std::map<int, float> relevance;
+        auto bufQuery = splitString(query, " ");
         int maxScore = 0;
-        for (auto word: query) {
-            for (auto it = idx->index[word].begin(); it != idx->index[word].end(); ++it) {
-                relevance[it->first] += it->second;
-                if (maxScore < relevance[it->first]) {
-                    maxScore = relevance[it->first];
+        for (auto word: bufQuery) {
+            if (idx->index.contains(word)) {
+                for (auto it = idx->index[word].begin(); it != idx->index[word].end(); ++it) {
+                    relevance[it->first] += it->second;
+                    if (maxScore < relevance[it->first]) {
+                        maxScore = relevance[it->first];
+                    }
                 }
             }
         }
 
         for (auto it = relevance.begin(); it != relevance.end(); ++it) {
-            it->second /= maxScore;
+            if (maxScore != 0)
+                it->second /= maxScore;
+            else
+                it->second = 0;
         }
 
-        std::vector<std::vector<std::pair<int, float> > > results;
-
-        int const size = (relevance.size() - 1) < cfg->max_responses ? (relevance.size()-1) : cfg->max_responses;
-        std::vector<std::pair<int, float> > bufResult;
-        for (int i = 0; i <= size; ++i) {
-            auto bufMax = relevance.end();
-
-            for (auto it = relevance.begin(); it != relevance.end(); ++it) {
-                if (bufMax->second < it->second && !findInVector(&bufResult, *it)) {
-                    bufMax = it;
-                }
-            }
-            bufResult.emplace_back(bufMax->first, bufMax->second);
+        std::vector<std::pair<int, float> > results;
+        for (auto pair: relevance) {
+            results.emplace_back(pair.first, pair.second);
         }
-        nlohmann::json j = bufResult;
-        std::cout << j.dump(4) << std::endl;
-        results.push_back(bufResult);
+        std::ranges::sort(results, [](const auto &a, const auto &b) {
+            return a.second > b.second;
+        });
+
+        if (results.size() > cfg->max_responses) {
+            results.resize(cfg->max_responses);
+        }
+
         return results;
     }
+    std::vector<std::vector<std::pair<int, float> > > searchAllRequests(std::vector<std::string > requests) {
 
-    static bool findInVector(const std::vector<std::pair<int, float> > *vec, const std::pair<int, float> &item) {
-        for (const auto & it : *vec) {
-            if (it.first == item.first) {
-                return true;
-            }
+        std::vector<std::future<std::vector<std::pair<int, float>>>> futures;
+
+        // запускаем потоки
+        for (const auto& request : requests) {
+            futures.push_back(
+                std::async(std::launch::async, [this, request]() {
+                    return search(request);
+                })
+            );
         }
-        return false;
+
+        // собираем результаты
+        std::vector<std::vector<std::pair<int, float>>> results;
+
+        for (auto& f : futures) {
+            results.push_back(f.get());
+        }
+
+        return results;
     }
 };
 
